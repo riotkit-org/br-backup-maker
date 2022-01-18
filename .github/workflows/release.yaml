@@ -32,3 +32,8 @@ jobs:
               with:
                   target: 'PKGBUILD'
                   pkgname: 'backup-maker'
+
+            - name: Release Arch Linux package
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: "backup-maker-*.pkg.tar.zst"

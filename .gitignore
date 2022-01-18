@@ -5,3 +5,6 @@
 src
 pkg
 /.build/backup-maker
+/*.tar.zst
+/*.tar.gz
+/*.tar.xz
