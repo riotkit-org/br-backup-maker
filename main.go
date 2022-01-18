@@ -65,12 +65,14 @@ func createContextFromArgumentParsing() context.ActionContext {
 	passphrase := ""
 	recipient := ""
 
+	timeoutParam := *timeout
+
 	// prepare context
 	ctx.Gpg.PublicKeyPath = *publicKeyPath // Public & Private keys are assigned there, but later will be re-assigned by factory method
 	ctx.Url = *url
 	ctx.CollectionId = *collectionId
 	ctx.AuthToken = *authToken
-	ctx.Timeout = *timeout
+	ctx.Timeout = int64(timeoutParam)
 	ctx.LogLevel = uint32(logLevel)
 	if downloadCmd.Happened() {
 		ctx.ActionType = "download"
@@ -131,7 +133,8 @@ func overrideFromEnvironment(ctx context.ActionContext, passphrase string, recip
 		ctx.CollectionId = os.Getenv("BM_COLLECTION_ID")
 	}
 	if hasUsedEnvVariable("BM_TIMEOUT") {
-		ctx.Timeout, _ = strconv.Atoi(os.Getenv("BM_TIMEOUT"))
+		timeout, _ := strconv.Atoi(os.Getenv("BM_TIMEOUT"))
+		ctx.Timeout = int64(timeout)
 	}
 	if hasUsedEnvVariable("BM_RECIPIENT") {
 		recipient = os.Getenv("BM_RECIPIENT")

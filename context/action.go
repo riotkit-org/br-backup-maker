@@ -7,7 +7,7 @@ type ActionContext struct {
 	CollectionId string
 	AuthToken    string
 	Command      string
-	Timeout      int
+	Timeout      int64
 	ActionType   string
 
 	VersionToRestore string

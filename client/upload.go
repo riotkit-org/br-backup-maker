@@ -53,9 +53,9 @@ func gracefullyKillProcess(cmd *exec.Cmd) error {
 }
 
 // Upload is uploading bytes read from io.Reader stream into HTTP endpoint of Backup Repository server
-func Upload(domainWithSchema string, collectionId string, authToken string, body io.Reader, timeout int) (string, string, error) {
+func Upload(domainWithSchema string, collectionId string, authToken string, body io.Reader, timeout int64) (string, string, error) {
 	if timeout == 0 {
-		timeout = int(time.Second * 60 * 20)
+		timeout = int64(time.Second * 60 * 20)
 	}
 
 	url := fmt.Sprintf("%v/api/stable/repository/collection/%v/backup", domainWithSchema, collectionId)

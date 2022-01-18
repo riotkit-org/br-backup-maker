@@ -7,15 +7,15 @@ import (
 
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
-	SetTimeout(timeout int)
+	SetTimeout(timeout int64)
 }
 
 type HTTPClientImpl struct {
 	client  http.Client
-	Timeout int
+	Timeout int64
 }
 
-func (that HTTPClientImpl) SetTimeout(timeout int) {
+func (that HTTPClientImpl) SetTimeout(timeout int64) {
 	that.client.Timeout = time.Second * time.Duration(timeout)
 }
 

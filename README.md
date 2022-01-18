@@ -1,6 +1,8 @@
 Backup Maker
 ============
 
+[![Test](https://github.com/riotkit-org/br-backup-maker/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/riotkit-org/br-backup-maker/actions/workflows/test.yaml)
+
 Tiny backup client packed in a single binary. Interacts with a `Backup Repository` server to store files, uses GPG to secure your
 backups even against the server administrator.
 
