@@ -34,7 +34,7 @@ jobs:
                   go-version: 1.17
 
             - name: Create Arch Linux package
-              uses: 2m/arch-pkgbuild-builder@v1.16
+              uses: 2m/arch-pkgbuild-builder@v1.18
               with:
                   target: 'pkgbuild'
                   pkgname: './'
