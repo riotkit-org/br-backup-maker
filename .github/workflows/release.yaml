@@ -30,8 +30,8 @@ jobs:
             - name: Create Arch Linux package
               uses: 2m/arch-pkgbuild-builder@v1.16
               with:
-                  target: 'PKGBUILD'
-                  pkgname: 'backup-maker'
+                  target: 'pkgbuild'
+                  pkgname: './'
 
             - name: Release Arch Linux package
               uses: softprops/action-gh-release@v1
