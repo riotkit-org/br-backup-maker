@@ -1,3 +1,7 @@
 /.build
 .idea
 
+# Arch Linux build
+src
+pkg
+/.build/backup-maker
