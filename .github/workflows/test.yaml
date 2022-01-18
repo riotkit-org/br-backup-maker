@@ -24,4 +24,4 @@ jobs:
               uses: 2m/arch-pkgbuild-builder@v1.16
               with:
                   target: 'PKGBUILD'
-                  pkgname: 'backup-maker'
+                  pkgname: './'
