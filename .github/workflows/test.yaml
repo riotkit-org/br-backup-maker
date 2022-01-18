@@ -20,12 +20,6 @@ jobs:
             - name: Test
               run: "go test -v"
 
-            - name: Create Arch Linux package
-              uses: 2m/arch-pkgbuild-builder@v1.16
-              with:
-                  target: 'pkgbuild'
-                  pkgname: './'
-
     check-packaging:
         runs-on: ubuntu-latest
         steps:
