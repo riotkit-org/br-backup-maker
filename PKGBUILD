@@ -4,7 +4,7 @@ pkgrel=1
 pkgdesc='Tiny backup client packed in a single binary. Interacts with a `Backup Repository` server to store files, uses GPG to secure your backups even against the server administrator.'
 arch=('x86_64')
 url="https://github.com/riotkit-org"
-license=('APACHE-2')
+license=('APACHE')
 makedepends=('go')
 
 prepare(){
