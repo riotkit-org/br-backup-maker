@@ -17,7 +17,7 @@ build() {
     export CGO_CXXFLAGS="${CXXFLAGS}"
     export CGO_LDFLAGS="${LDFLAGS}"
     export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
-    export GOROOT=$(pwd)
+    export GOROOT=$(pwd):/home/go
     go build -o ./.build/backup-maker ./
 }
 check() {
