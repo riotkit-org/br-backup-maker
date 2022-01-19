@@ -56,6 +56,7 @@ please take a look at `Backup Controller` documentation.
 3. Result of the command, it's stdout is transferred to the `gpg` process
 4. From `gpg` process the encoded data is buffered directly to the server
 5. Feedback is returned
+6. Temporary `gpg` keyring is deleted
 
 ## Restore - How it works?
 
@@ -68,6 +69,7 @@ It is very similar as in backup operation.
 5. Backup is transmitted on the fly from server to `gpg` -> our shell command
 6. Our shell `--cmd` / `-c` command is taking stdin and performing a restore action
 7. Feedback is returned
+8. Temporary `gpg` keyring is deleted
 
 ## Hints
 
