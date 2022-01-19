@@ -44,6 +44,31 @@ backup-maker restore --url $$(cat .build/test/domain.txt) \
     --log-level debug
 ```
 
+## Backup - How it works?
+
+This list of steps includes only steps that are done inside `Backup Maker`, to understand whole flow
+please take a look at `Backup Controller` documentation.
+
+**Note: GPG steps are optional**
+
+1. `gpg` keyring is created in a temporary directory, keys are imported
+2. Command specified in `--cmd` or in `-c` is executed
+3. Result of the command, it's stdout is transferred to the `gpg` process
+4. From `gpg` process the encoded data is buffered directly to the server
+5. Feedback is returned
+
+## Restore - How it works?
+
+It is very similar as in backup operation.
+
+1. `gpg` keyring is created in a temporary directory, keys are imported
+2. Command specified in `--cmd` or in `-c` is executed
+3. `gpg` process is started
+4. Backup download is starting
+5. Backup is transmitted on the fly from server to `gpg` -> our shell command
+6. Our shell `--cmd` / `-c` command is taking stdin and performing a restore action
+7. Feedback is returned
+
 ## Hints
 
 - Skip `--private-key` and `--passphrase` to disable GPG
