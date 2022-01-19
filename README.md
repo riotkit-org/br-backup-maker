@@ -16,6 +16,20 @@ backups even against the server administrator.
 
 # Usage
 
+## Getting backup-maker
+
+Take a look at releases tab and pick a version suitable for your platform. We support Unix-like platforms, there is no support for Windows.
+
+You can use [eget](https://github.com/zyedidia/eget) as a 'package manager' to install `backup-maker`
+
+```bash
+# for pre-release
+eget --pre-release riotkit-org/br-backup-maker --to /usr/local/bin/backup-maker
+
+# for latest stable release
+eget riotkit-org/br-backup-maker --to /usr/local/bin/backup-maker
+```
+
 ## Creating backup
 
 ```bash
