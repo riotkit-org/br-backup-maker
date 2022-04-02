@@ -3,7 +3,7 @@ package client
 import (
 	"errors"
 	"fmt"
-	ctx "github.com/riotkit-org/backup-repository/backup-maker/context"
+	ctx "github.com/riotkit-org/backup-maker/context"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"

@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: CronJob
+metadata:
+    name: {{ .Values.name }}
+spec:
+    schedule: "{{ .Values.schedule }}"
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    restartPolicy: Never
+                    containers:
+                        - name: backup-maker
+                          image: {{ .Values.image }}
+                          imagePullPolicy: Always
+                          command:
+                              - /bin/bash
+                              - /mnt/data/{{ .Values.scriptName }}
+                          envFrom:
+                              - secretRef:
+                                    name: {{ .Values.name }}
+                              {{- if .Values.isGPGSealedSecret }}
+                              - secretRef:
+                                    name: {{ .Values.sealedSecretName }}
+                              {{- end }}
+                          volumeMounts:
+                              - name: data
+                                mountPath: /usr/backup-maker
+                              - name: secrets
+                                mountPath: /mnt/secrets
+                    volumes:
+                        - name: data
+                          configMap:
+                              name: {{ .Values.name }}
+                        - name: secrets
+                          configMap:
+                              name: {{ if .Values.isGPGSealedSecret }}{{ .Values.sealedSecretName }}{{ else }}{{ .Values.name }}{{ end }}
+
+                        # todo: Add volumes to values to allow mounting data for copying files

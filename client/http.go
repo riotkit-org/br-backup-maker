@@ -42,4 +42,4 @@ type HttpClientMock struct {
 func (h HttpClientMock) Do(_ *http.Request) (response *http.Response, reterr error) {
 	return &h.mockedResponse, h.mockedError
 }
-func (h HttpClientMock) SetTimeout(_ int) {}
+func (h HttpClientMock) SetTimeout(_ int64) {}

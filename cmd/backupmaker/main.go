@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/akamensky/argparse"
-	"github.com/riotkit-org/backup-repository/backup-maker/client"
-	"github.com/riotkit-org/backup-repository/backup-maker/context"
+	"github.com/riotkit-org/backup-maker/client"
+	"github.com/riotkit-org/backup-maker/context"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"

@@ -18,7 +18,7 @@ build() {
     export CGO_LDFLAGS="${LDFLAGS}"
     export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
     export GOROOT=/usr/lib/go
-    go build -o ./.build/backup-maker ./
+    make build_bm
 }
 check() {
     return 0

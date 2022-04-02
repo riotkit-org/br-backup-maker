@@ -1,12 +1,16 @@
 include test_backupmaker.mk
 
-BIN_PATH=$$(pwd)/.build/backup-maker
+BM_BIN_PATH=$$(pwd)/.build/backup-maker
+BMG_BIN_PATH=$$(pwd)/.build/bmg
 
 build_bm:
-	go build -o ${BIN_PATH} ./cmd/backupmaker/main.go
+	go build -o ${BM_BIN_PATH} ./cmd/backupmaker/main.go
+
+build_bmg:
+	go build -o ${BMG_BIN_PATH} ./cmd/bmg/main.go
 
 test:
-	cd context && go test
-	cd client && go test
-	go test
+	go test -v ./...
 
+coverage:
+	go test -v ./... -covermode=count -coverprofile=coverage.out

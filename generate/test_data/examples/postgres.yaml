@@ -1,0 +1,31 @@
+# System-specific variables, in this case specific to PostgreSQL
+# ${...} and $(...) syntax will be evaluated in target environment e.g. Kubernetes POD
+Params:
+    hostname: postgres.db.svc.cluster.local
+    port: 5432
+    db: rkc-test
+    user: riotkit
+    password: "${DB_PASSWORD}" # injects a shell-syntax, put your password in a `kind: Secret` and mount as environment variable. You can also use $(cat /mnt/secret) syntax, be aware of newlines!
+
+# Generic repository access details. Everything here will land AS IS into the bash script.
+# This means that any ${...} and $(...) will be executed in target environment e.g. inside Kubernetes POD
+Repository:
+    url: "https://example.org"
+    token: "${BR_TOKEN}"
+    encryptionKeyPath: "/var/lib/backup-repository/encryption.key"
+    passphrase: "${GPG_PASSPHRASE}"
+    recipient: "your-gpg@email.org"
+    collectionId: "111-222-333-444"
+
+# Generic values for Helm used to generate jobs/pods. Those values will overwrite others.
+# Notice: Environment variables with '${...}' and '$(...)' will be evaluated in LOCAL SHELL DURING BUILD
+HelmValues:
+    name: "hello-world"
+    env:
+        # if specified, then will be added to `kind: Secret` and injected into POD as environment
+        # the value from ${GPG_PASSPHRASE} will be retrieved from the SHELL DURING THE BUILD
+        GPG_PASSPHRASE: "${GPG_PASSPHRASE}"
+
+        # most secure way for Kubernetes is to not provide secrets there, but define them as environment variables
+        # inside SealedSecrets - all encryptedData keys will be accessible as environment variables inside container
+

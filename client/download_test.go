@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/riotkit-org/backup-repository/backup-maker/context"
+	"github.com/riotkit-org/backup-maker/context"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io"
