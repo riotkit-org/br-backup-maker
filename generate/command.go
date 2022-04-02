@@ -28,7 +28,6 @@ func (c *SnippetGenerationCommand) Run() error {
 	}
 
 	// todo: JSON schema
-	// todo: Sealed Secret support for GPG keys - if key is in sealed secrets format, then put it as secret instead of original secret
 
 	rendered, err := t.RenderTemplate(c.Template, c.Operation, variables)
 	if err != nil {
