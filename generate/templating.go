@@ -50,8 +50,8 @@ func (t *Templating) RenderTemplate(name string, operation string, variables int
 //              Templates in first directory are replaced only if the user has not modified them.
 func (t *Templating) loadTemplate(name string, operation string) ([]byte, string, error) {
     paths := []string{
-        "~/.bm/templates/" + operation + "/" + name + ".tmpl",
-        "~/.bm/templates/base/" + operation + "/" + name + ".tmpl",
+        "~/.bm/templates/user/" + operation + "/" + name + ".tmpl",
+        "~/.bm/templates/.base/" + operation + "/" + name + ".tmpl",
     }
 
     for _, path := range paths {

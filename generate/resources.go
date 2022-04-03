@@ -61,7 +61,7 @@ func extract() error {
 
     for _, key := range []string{".base", "user"} {
         // templates
-        if (!templatesModifiedByUser && key == "user") || key == "base" {
+        if (!templatesModifiedByUser && key == "user") || key == ".base" {
             templatesPath, pathErr := ExpandPath("~/.bm/templates/" + key)
             if pathErr != nil {
                 return pathErr
@@ -72,7 +72,7 @@ func extract() error {
         }
 
         // helm chart
-        if (!chartsModifiedByUser && key == "user") || key == "base" {
+        if (!chartsModifiedByUser && key == "user") || key == ".base" {
             chartPath, chartPathErr := ExpandPath("~/.bm/chart/" + key)
             if chartPathErr != nil {
                 return chartPathErr
@@ -123,7 +123,7 @@ func extractRecursively(fs embed.FS, baseDirName string, path string, target str
 }
 
 func checkModifiedByUser(path string) bool {
-    base, _ := dirhash.HashDir(path+"/base", "", dirhash.Hash1)
+    base, _ := dirhash.HashDir(path+"/.base", "", dirhash.Hash1)
     user, _ := dirhash.HashDir(path+"/user", "", dirhash.Hash1)
 
     return base != user

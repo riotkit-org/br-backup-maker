@@ -48,7 +48,7 @@ func (c *SnippetGenerationCommand) Run() error {
             return errors.Wrap(err, "cannot read helm values override from yaml file")
         }
 
-        renderedChart, helmErr := t.RenderChart(rendered, string(gpgKeyContent), c.Schedule, c.JobName, c.Image, helmValuesOverride, c.Namespace)
+        renderedChart, helmErr := t.RenderChart(rendered, string(gpgKeyContent), c.Schedule, c.JobName, c.Image, helmValuesOverride, c.Namespace, c.Operation)
         if helmErr != nil {
             return helmErr
         }

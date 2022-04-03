@@ -1,3 +1,4 @@
+{{- if eq .Values.kindType "CronJob" }}
 ---
 apiVersion: v1
 kind: CronJob
@@ -38,3 +39,4 @@ spec:
                               name: {{ if .Values.isGPGSealedSecret }}{{ .Values.sealedSecretName }}{{ else }}{{ .Values.name }}{{ end }}
 
                         # todo: Add volumes to values to allow mounting data for copying files
+{{- end }}

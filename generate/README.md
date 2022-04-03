@@ -1,5 +1,5 @@
 Backup & Restore procedure Generator
-------------------------------------
+====================================
 
 Purpose of this generator is to create procedures from templates for both **Backup** and **Restore** operations to use in automated way.
 Backup made using generated procedure should be possible to restore with a restore procedure in automated way.
@@ -66,12 +66,66 @@ spec:
 - Used Kubernetes templates: [chart](./chart)
 - Standard available service templates: [service templates](./templates/backup)
 
+## *bmg restore*
+
+Works almost the same as `bmg backup`, except the produced result. 
+
+- The produced script takes additionally a parameter to specify to which version rollback to
+- In case of Kubernetes a `kind: Pod` is outputted instead of `kind: CronJob`
+
+### Reference
+
+- Used Kubernetes templates: [chart](./chart)
+- Standard available service templates: [service templates](./templates/restore)
+
+Templates
+---------
+
+Everytime `bmg` is launched there are unpacked Helm chart templates and service templates into `~/.bmg`.
+
+**Rules:**
+- `.base` directories are always overwritten when CLI application is launched
+- `user` directories allows for user customization. Files will be overwritten by app util user modifies at least one file in `user` directory
+
+The directory structure looks for example like this:
+
+```bash
+#   ~/.bm
+#   ├── chart
+#   │         ├── .base
+#   │         │         ├── configmap.yaml
+#   │         │         ├── cronjob.yaml
+#   │         │         └── secret.yaml
+#   │         └── user
+#   │             ├── configmap.yaml
+#   │             ├── cronjob.yaml
+#   │             └── secret.yaml
+#   └── templates
+#      ├── .base
+#      │         ├── backup
+#      │         │         ├── files.tmpl
+#      │         │         └── postgres.tmpl
+#      │         └── restore
+#      │             ├── files.tmpl
+#      │             └── postgres.tmpl
+#      └── user
+#          ├── backup
+#          │         ├── files.tmpl
+#          │         └── postgres.tmpl
+#          └── restore
+#              ├── files.tmpl
+#              └── postgres.tmpl
+#
+```
+
 Usage concept
 -------------
 
 1. User prepares YAML file as input definition **for both backup & restore**
 
 ```yaml
+# definition.yaml
+
 # System-specific variables, in this case specific to PostgreSQL
 # ${...} and $(...) syntax will be evaluated in target environment e.g. Kubernetes POD
 Params:
@@ -84,7 +138,7 @@ Params:
 # Generic repository access details. Everything here will land AS IS into the bash script.
 # This means that any ${...} and $(...) will be executed in target environment e.g. inside Kubernetes POD
 Repository:
-    url: "https://example.org"
+    url: "https:#example.org"
     token: "${BR_TOKEN}"
     encryptionKeyPath: "/var/lib/backup-repository/encryption.key"
     passphrase: "${GPG_PASSPHRASE}"

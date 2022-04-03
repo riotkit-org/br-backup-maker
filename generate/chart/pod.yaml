@@ -1,0 +1,40 @@
+{{- if eq .Values.kindType "Pod" }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: {{ .Values.name }}
+spec:
+    template:
+        spec:
+            restartPolicy: Never
+            containers:
+                - name: backup-maker
+                  image: {{ .Values.image }}
+                  imagePullPolicy: Always
+                  command:
+                      - /bin/bash
+                      - "-c"
+                      - "sleep 7200"
+                  envFrom:
+                      - secretRef:
+                            name: {{ .Values.name }}
+                      {{- if .Values.isGPGSealedSecret }}
+                      - secretRef:
+                            name: {{ .Values.sealedSecretName }}
+                      {{- end }}
+                  volumeMounts:
+                      - name: data
+                        mountPath: /usr/backup-maker
+                      - name: secrets
+                        mountPath: /mnt/secrets
+            volumes:
+                - name: data
+                  configMap:
+                      name: {{ .Values.name }}
+                - name: secrets
+                  configMap:
+                      name: {{ if .Values.isGPGSealedSecret }}{{ .Values.sealedSecretName }}{{ else }}{{ .Values.name }}{{ end }}
+
+                # todo: Add volumes to values to allow mounting data for copying files
+{{- end }}

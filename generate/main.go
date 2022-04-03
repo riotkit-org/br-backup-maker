@@ -39,18 +39,30 @@ func NewBackupCommand() *cobra.Command {
 }
 
 func NewRestoreCommand() *cobra.Command {
+    app := &SnippetGenerationCommand{}
+
     command := &cobra.Command{
         Use:   "restore",
         Short: "Generates a restore procedure",
         Run: func(command *cobra.Command, args []string) {
-            err := command.Help()
+            err := app.Run()
+
             if err != nil {
                 logrus.Errorf(err.Error())
             }
         },
     }
 
-    // todo
+    command.Flags().StringVarP(&app.Template, "template", "t", "", "Template Name e.g. 'postgres', 'mysql', 'gitea', 'redis', 'files', 'wordpress'")
+    command.Flags().StringVarP(&app.DefinitionFile, "definition", "d", "./rkc-backup.yaml", "Backup & Restore definition in YAML format, see reference in docs")
+    command.Flags().BoolVarP(&app.IsKubernetes, "kubernetes", "k", false, "Generate output in Kubernetes manifests format")
+    command.Flags().StringVarP(&app.KeyPath, "gpg-key-path", "g", "gpg-key", "Path to the GPG key (private or public, recommended to use public key)")
+    command.Flags().StringVarP(&app.OutputDir, "output-dir", "o", "./", "Path where to store output files")
+    command.Flags().StringVarP(&app.JobName, "k8s-name", "", "my-backup-job", "Resources Name (if using --kubernetes)")
+    command.Flags().StringVarP(&app.Image, "k8s-image", "", "ghcr.io/riotkit-org/backup-maker-env:latest", "Image (if using --kubernetes)")
+    command.Flags().StringVarP(&app.Namespace, "k8s-namespace", "n", "", "Namespace (if using --kubernetes)")
+    app.Operation = "restore"
+    app.Schedule = ""
 
     return command
 }

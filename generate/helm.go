@@ -14,7 +14,7 @@ import (
 
 // RenderChart Renders YAML files from 'chart/templates' directory combining Helm values from CLI switches and from .HelmValues
 func (t *Templating) RenderChart(script string, gpgKeyContent string, schedule string, jobName string, image string,
-    valuesOverride map[interface{}]interface{}, namespace string) (string, error) {
+    valuesOverride map[interface{}]interface{}, namespace string, operation string) (string, error) {
 
     templatesDir := t.buildTemplatesDir()
     templates, templatesLoadErr := t.loadChartFiles(templatesDir)
@@ -34,6 +34,11 @@ func (t *Templating) RenderChart(script string, gpgKeyContent string, schedule s
         }
     }
 
+    kindType := "CronJob"
+    if operation == "restore" {
+        kindType = "Pod"
+    }
+
     // Helm values
     values := map[string]interface{}{
         "Name":              jobName,
@@ -43,6 +48,8 @@ func (t *Templating) RenderChart(script string, gpgKeyContent string, schedule s
         "image":             image,
         "scriptName":        jobName,
         "sealedSecretName":  saName,
+        "kindType":          kindType,
+        "operationType":     operation,
         "isGPGSealedSecret": isSealedSecret,
     }
     for key, val := range valuesOverride {
