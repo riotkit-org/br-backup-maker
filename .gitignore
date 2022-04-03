@@ -1,5 +1,7 @@
 /.build
 .idea
+/backup.yaml
+/coverage.out
 
 # Arch Linux build
 src
