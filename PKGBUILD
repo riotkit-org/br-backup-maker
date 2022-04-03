@@ -8,21 +8,16 @@ license=('APACHE')
 makedepends=('go')
 
 prepare(){
-    mkdir -p .build/
+    return 0
 }
 build() {
-    cd ..
-    export CGO_CPPFLAGS="${CPPFLAGS}"
-    export CGO_CFLAGS="${CFLAGS}"
-    export CGO_CXXFLAGS="${CXXFLAGS}"
-    export CGO_LDFLAGS="${LDFLAGS}"
-    export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
-    export GOROOT=/usr/lib/go
-    make build_bm
+    echo " >> Using already built artifacts by CI from .build directory"
+    return 0
 }
 check() {
     return 0
 }
 package() {
-    install -Dm755 ../.build/backup-maker "$pkgdir"/usr/bin/$pkgname
+    install -Dm755 ../.build/backup-maker "$pkgdir"/usr/bin/backup-maker
+    install -Dm755 ../.build/bmg "$pkgdir"/usr/bin/bmg
 }
