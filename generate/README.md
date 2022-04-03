@@ -104,6 +104,6 @@ HelmValues:
         # inside SealedSecrets - all encryptedData keys will be accessible as environment variables inside container
 ```
 
-2. Next, User runs a generation command e.g. `rkc backups generate backup --kubernetes --cron '*/30 * * *`
+2. Next, User runs a generation command
 
-In result the User gets prepared Kubernetes manifests that could be applied to the cluster.
+In result the User gets prepared Kubernetes manifests that could be applied to the cluster manually or by ArgoCD, FluxCD, Tekton Pipelines, Argo Workflows or other CI/CD software.
