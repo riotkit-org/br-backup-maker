@@ -52,6 +52,8 @@ func (t *Templating) loadTemplate(name string, operation string) ([]byte, string
     paths := []string{
         "~/.bm/templates/user/" + operation + "/" + name + ".tmpl",
         "~/.bm/templates/.base/" + operation + "/" + name + ".tmpl",
+        "./generate/templates/" + operation + "/" + name + ".tmpl", // unit tests
+        "./templates/" + operation + "/" + name + ".tmpl",          // unit tests
     }
 
     for _, path := range paths {

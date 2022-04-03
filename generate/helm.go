@@ -148,6 +148,7 @@ func (t *Templating) buildTemplatesDir() string {
         "~/.bm/chart/user",
         "~/.bm/chart/.base",
         "./generate/chart", // unit tests
+        "./chart",          // unit tests
     }
 
     for _, path := range paths {

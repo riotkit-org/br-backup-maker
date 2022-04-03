@@ -126,3 +126,34 @@ func TestRenderChart_ValidPlainGPGKeyInSecret(t *testing.T) {
 
     assert.Nil(t, err)
 }
+
+// covers processVariablesLocally() and evaluateShell()
+func TestRenderChart_ValidWithEvaluatedHelmValuesInLocalShellAtBuildStage(t *testing.T) {
+    gpgKey := `
+    ------ gpg private key blah blah blah ------
+    .... secret key Putin chuj, all politics are dickheads ....
+    ------ end of blah blah blah ------
+    `
+
+    environment := map[interface{}]interface{}{
+        "SOME_THING": "$(uname) is the real free OS", // should show operating system name "Linux"
+    }
+    variables := map[interface{}]interface{}{
+        "env": environment,
+    }
+
+    templating := generate.Templating{}
+    rendered, err := templating.RenderChart(
+        "#!/bin/bash\necho 'Hello libertarian world!';",
+        gpgKey,
+        "", // no schedule
+        "priama-akcia",
+        "alpine:3.14",
+        variables,
+        "priama-akcia",
+        "backup",
+    )
+
+    assert.Contains(t, rendered, "Linux is the real free OS") // somewhere inside `kind: Secret` there should be a variable defined with this value
+    assert.Nil(t, err)
+}
