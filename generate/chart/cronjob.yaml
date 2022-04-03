@@ -1,6 +1,6 @@
 {{- if eq .Values.kindType "CronJob" }}
 ---
-apiVersion: v1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
     name: {{ .Values.name }}
@@ -17,7 +17,7 @@ spec:
                           imagePullPolicy: Always
                           command:
                               - /bin/bash
-                              - /mnt/data/{{ .Values.scriptName }}
+                              - /usr/backup-maker/{{ .Values.scriptName }}
                           envFrom:
                               - secretRef:
                                     name: {{ .Values.name }}
@@ -35,8 +35,9 @@ spec:
                           configMap:
                               name: {{ .Values.name }}
                         - name: secrets
-                          configMap:
-                              name: {{ if .Values.isGPGSealedSecret }}{{ .Values.sealedSecretName }}{{ else }}{{ .Values.name }}{{ end }}
+                          secret:
+                              secretName: {{ if .Values.isGPGSealedSecret }}{{ .Values.sealedSecretName }}{{ else }}{{ .Values.name }}{{ end }}
+                              optional: false
 
                         # todo: Add volumes to values to allow mounting data for copying files
 {{- end }}
