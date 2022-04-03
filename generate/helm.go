@@ -41,6 +41,7 @@ func (t *Templating) RenderChart(script string, gpgKeyContent string, schedule s
 
     // Helm values
     values := map[string]interface{}{
+        "name":              jobName,
         "Name":              jobName,
         "scriptContent":     script,
         "gpgKeyContent":     gpgKeyContent,
@@ -73,7 +74,7 @@ func (t *Templating) RenderChart(script string, gpgKeyContent string, schedule s
         Raw: nil,
         Metadata: &chart.Metadata{
             Name:        "rkc",
-            Home:        "https://github.com/riotkit-org/rkc",
+            Home:        "https://github.com/riotkit-org/br-backup-maker",
             Version:     "1.0",
             Description: "Backup or Restore job",
             AppVersion:  "1.0",
@@ -146,6 +147,7 @@ func (t *Templating) buildTemplatesDir() string {
     paths := []string{
         "~/.bm/chart/user",
         "~/.bm/chart/.base",
+        "generate/chart", // unit tests
     }
 
     for _, path := range paths {
