@@ -21,8 +21,8 @@ func NewBackupCommand() *cobra.Command {
         },
     }
 
-    //command.Example = ""
-    //command.Long = ""
+    // command.Example = ""
+    // command.Long = ""
 
     command.Flags().StringVarP(&app.Template, "template", "t", "", "Template Name e.g. 'postgres', 'mysql', 'gitea', 'redis', 'files', 'wordpress'")
     command.Flags().StringVarP(&app.DefinitionFile, "definition", "d", "./rkc-backup.yaml", "Backup & Restore definition in YAML format, see reference in docs")
@@ -57,6 +57,10 @@ func NewRestoreCommand() *cobra.Command {
 
 // Main creates the new command
 func Main() *cobra.Command {
+    if err := extract(); err != nil {
+        logrus.Fatal(err)
+    }
+
     cmd := &cobra.Command{
         Use:   "bmg",
         Short: "",

@@ -50,13 +50,12 @@ func (t *Templating) RenderTemplate(name string, operation string, variables int
 //              Templates in first directory are replaced only if the user has not modified them.
 func (t *Templating) loadTemplate(name string, operation string) ([]byte, string, error) {
     paths := []string{
-        "./cmd/backups/generate/templates/" + operation + "/" + name + ".tmpl", // only in testing
-        "~/.rkc/backups/templates/" + operation + "/" + name + ".tmpl",
-        "~/.rkc/backups/templates/base/" + operation + "/" + name + ".tmpl",
+        "~/.bm/templates/" + operation + "/" + name + ".tmpl",
+        "~/.bm/templates/base/" + operation + "/" + name + ".tmpl",
     }
 
     for _, path := range paths {
-        path, expandErr := expandPath(path)
+        path, expandErr := ExpandPath(path)
         if expandErr != nil {
             logrus.Warnf("Cannot expand path: %s", path)
         }
@@ -106,7 +105,7 @@ func (t *Templating) loadHelmValuesOverride(path string) (map[interface{}]interf
     return result["HelmValues"].(map[interface{}]interface{}), nil
 }
 
-func expandPath(path string) (string, error) {
+func ExpandPath(path string) (string, error) {
     if len(path) == 0 || path[0] != '~' {
         return path, nil
     }

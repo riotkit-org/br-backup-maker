@@ -137,13 +137,12 @@ func (t *Templating) validateSealedSecret(secretContent string, namespace string
 
 func (t *Templating) buildTemplatesDir() string {
     paths := []string{
-        "./cmd/backups/generate/chart", // only in testing
-        "~/.rkc/backups/helm",
-        "~/.rkc/backups/helm/base",
+        "~/.bm/chart/user",
+        "~/.bm/chart/.base",
     }
 
     for _, path := range paths {
-        path, expandErr := expandPath(path)
+        path, expandErr := ExpandPath(path)
         if expandErr != nil {
             logrus.Warnf("Cannot expand path: %s", path)
         }
