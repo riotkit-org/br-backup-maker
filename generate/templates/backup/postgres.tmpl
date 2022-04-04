@@ -4,7 +4,7 @@
 
 set -eu
 
-COMMAND="pgbr db backup --password '{{ .Params.password }}' --user '{{ .Params.user }}' --db-name '{{ .Params.db }}' --port '{{ .Params.port }}'";
+COMMAND="pgbr db backup --password '{{ .Params.password }}' --user '{{ .Params.user }}' --db-name '{{ .Params.db }}' --port '{{ .Params.port }}' --host '{{ .Params.hostname }}'";
 
 export BM_AUTH_TOKEN="{{ .Repository.token }}";
 export BM_COLLECTION_ID="{{ .Repository.collectionId }}";

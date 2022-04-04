@@ -4,7 +4,7 @@
 
 set -eu
 
-COMMAND="pgbr db restore --password '{{ .Params.password }}' --user '{{ .Params.user }}' --db-name '{{ .Params.db }}' --port '{{ .Params.port }}'";
+COMMAND="pgbr db restore --password '{{ .Params.password }}' --user '{{ .Params.user }}' --db-name '{{ .Params.db }}' --port '{{ .Params.port }}' --host '{{ .Params.hostname }}'";
 selectedVersion="${RESTORE_VERSION:-latest}"
 
 export BM_AUTH_TOKEN="{{ .Repository.token }}";
