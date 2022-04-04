@@ -18,13 +18,6 @@ jobs:
               with:
                   go-version: 1.17
 
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@v1
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-
             - name: Build
               run: "make build_bm build_bmg"
 
@@ -35,9 +28,6 @@ jobs:
                       .build/backup-maker
                       .build/bmg
                       LICENSE
-
-            - name: Build docker
-              run: "make build_docker push_docker DOCKER_TAG=${GITHUB_REF##*/}"
 
             - name: Create Arch Linux package
               uses: 2m/arch-pkgbuild-builder@v1.18
@@ -50,3 +40,40 @@ jobs:
               with:
                   files: "backup-maker-*.pkg.tar.zst"
 
+            - uses: actions/upload-artifact@v2
+              with:
+                  name: binary
+                  path: .build/b*
+
+    release-docker:
+        runs-on: ubuntu-latest
+        needs: ["release"]
+        strategy:
+            max-parallel: 2
+            matrix:
+                include:
+                    - POSTGRES_VERSION: "14.0"
+                    - POSTGRES_VERSION: "13.0"
+                    - POSTGRES_VERSION: "12.0"
+                    - POSTGRES_VERSION: "11.0"
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - uses: actions/download-artifact@v2
+              with:
+                  name: binary
+                  path: .build/
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and release docker
+              run: "make build_docker push_docker DOCKER_TAG=${GITHUB_REF##*/}-pg POSTGRES_VERSION=${{ matrix.POSTGRES_VERSION }}"
