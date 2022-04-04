@@ -61,6 +61,6 @@ func TestRenderTemplate_FailsWhenAnyVariableIsMissing(t *testing.T) {
     })
 
     assert.NotNil(t, err)
-    assert.Contains(t, err.Error(), "templates/backup/postgres.tmpl")
+    assert.Contains(t, err.Error(), "postgres.tmpl")
     assert.Contains(t, err.Error(), "map has no entry for key")
 }

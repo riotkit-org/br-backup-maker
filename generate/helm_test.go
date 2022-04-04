@@ -1,6 +1,7 @@
 package generate_test
 
 import (
+    b64 "encoding/base64"
     "github.com/riotkit-org/backup-maker/generate"
     "github.com/stretchr/testify/assert"
     "testing"
@@ -97,8 +98,7 @@ func TestRenderChart_ValidWithSealedSecret(t *testing.T) {
 }
 
 func TestRenderChart_ValidPlainGPGKeyInSecret(t *testing.T) {
-    gpgKey := `
-    ------ gpg private key blah blah blah ------
+    gpgKey := `------ gpg private key blah blah blah ------
     .... secret key Putin chuj, all politics are dickheads ....
     ------ end of blah blah blah ------
     `
@@ -121,7 +121,7 @@ func TestRenderChart_ValidPlainGPGKeyInSecret(t *testing.T) {
     assert.Contains(t, rendered, "kind: ConfigMap")
 
     // gpg
-    assert.Contains(t, rendered, "all politics are dickheads") // contains gpg key in plan format (should be inside `kind: Secret`)
+    assert.Contains(t, rendered, "gpg-key: \"LS0tLS0tIGdwZyB") // contains gpg key in plan format (should be inside `kind: Secret`)
     assert.NotContains(t, rendered, "kind: SealedSecret")      // we use plain GPG key in this case!
 
     assert.Nil(t, err)
@@ -154,6 +154,6 @@ func TestRenderChart_ValidWithEvaluatedHelmValuesInLocalShellAtBuildStage(t *tes
         "backup",
     )
 
-    assert.Contains(t, rendered, "Linux is the real free OS") // somewhere inside `kind: Secret` there should be a variable defined with this value
+    assert.Contains(t, rendered, b64.StdEncoding.EncodeToString([]byte("Linux is the real free OS"))) // somewhere inside `kind: Secret` there should be a variable defined with this value
     assert.Nil(t, err)
 }

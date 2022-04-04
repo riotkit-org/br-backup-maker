@@ -2,6 +2,9 @@
 .idea
 /backup.yaml
 /coverage.out
+/backup.sh
+/gpg-key
+/test-postgres.yaml
 
 # Arch Linux build
 src
