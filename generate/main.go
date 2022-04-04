@@ -31,7 +31,7 @@ func NewBackupCommand() *cobra.Command {
     command.Flags().StringVarP(&app.OutputDir, "output-dir", "o", "./", "Path where to store output files")
     command.Flags().StringVarP(&app.Schedule, "k8s-job-schedule", "", "16 1 * * *", "Cronjob schedule (if using --kubernetes)")
     command.Flags().StringVarP(&app.JobName, "k8s-name", "", "my-backup-job", "Resources Name (if using --kubernetes)")
-    command.Flags().StringVarP(&app.Image, "k8s-image", "", "ghcr.io/riotkit-org/backup-maker-env:latest", "Image (if using --kubernetes)")
+    command.Flags().StringVarP(&app.Image, "k8s-image", "", "ghcr.io/riotkit-org/backup-maker:snapshot", "Image (if using --kubernetes)")
     command.Flags().StringVarP(&app.Namespace, "k8s-namespace", "n", "", "Namespace (if using --kubernetes)")
     app.Operation = "backup"
 
@@ -59,7 +59,7 @@ func NewRestoreCommand() *cobra.Command {
     command.Flags().StringVarP(&app.KeyPath, "gpg-key-path", "g", "gpg-key", "Path to the GPG key (private or public, recommended to use public key)")
     command.Flags().StringVarP(&app.OutputDir, "output-dir", "o", "./", "Path where to store output files")
     command.Flags().StringVarP(&app.JobName, "k8s-name", "", "my-backup-job", "Resources Name (if using --kubernetes)")
-    command.Flags().StringVarP(&app.Image, "k8s-image", "", "ghcr.io/riotkit-org/backup-maker-env:latest", "Image (if using --kubernetes)")
+    command.Flags().StringVarP(&app.Image, "k8s-image", "", "ghcr.io/riotkit-org/backup-maker:snapshot", "Image (if using --kubernetes)")
     command.Flags().StringVarP(&app.Namespace, "k8s-namespace", "n", "", "Namespace (if using --kubernetes)")
     app.Operation = "restore"
     app.Schedule = ""
