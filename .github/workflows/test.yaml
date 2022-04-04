@@ -76,4 +76,4 @@ jobs:
                   path: .build/
 
             - name: Build docker
-              run: "make build_docker DOCKER_TAG=snapshot"
+              run: "make build_docker push_docker DOCKER_TAG=snapshot"

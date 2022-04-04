@@ -18,6 +18,13 @@ jobs:
               with:
                   go-version: 1.17
 
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
             - name: Build
               run: "make build_bm build_bmg"
 
@@ -29,6 +36,9 @@ jobs:
                       .build/bmg
                       LICENSE
 
+            - name: Build docker
+              run: "make build_docker push_docker DOCKER_TAG=${GITHUB_REF##*/}"
+
             - name: Create Arch Linux package
               uses: 2m/arch-pkgbuild-builder@v1.18
               with:
@@ -39,3 +49,4 @@ jobs:
               uses: softprops/action-gh-release@v1
               with:
                   files: "backup-maker-*.pkg.tar.zst"
+
