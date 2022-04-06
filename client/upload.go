@@ -1,15 +1,17 @@
 package client
 
 import (
-    "errors"
+    "context"
     "fmt"
-    ctx "github.com/riotkit-org/backup-maker/context"
+    "github.com/pkg/errors"
+    actionCtx "github.com/riotkit-org/backup-maker/context"
     log "github.com/sirupsen/logrus"
     "io"
     "io/ioutil"
     "net/http"
     "os"
     "os/exec"
+    "syscall"
     "time"
 )
 
@@ -53,7 +55,7 @@ func gracefullyKillProcess(cmd *exec.Cmd) error {
 }
 
 // Upload is uploading bytes read from io.Reader stream into HTTP endpoint of Backup Repository server
-func Upload(domainWithSchema string, collectionId string, authToken string, body io.Reader, timeout int64) (string, string, error) {
+func Upload(ctx context.Context, domainWithSchema string, collectionId string, authToken string, body io.ReadCloser, timeout int64) (string, string, error) {
     if timeout == 0 {
         timeout = int64(time.Second * 60 * 20)
     }
@@ -62,27 +64,28 @@ func Upload(domainWithSchema string, collectionId string, authToken string, body
     log.Printf("Uploading to %v", url)
 
     client := http.Client{}
-    req, err := http.NewRequest(
+    req, err := http.NewRequestWithContext(
+        ctx,
         "POST",
         url,
         body)
 
-    client.Timeout = time.Second * 3600
+    client.Timeout = time.Second * 3600 // todo parametrize
     req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", authToken))
 
     if err != nil {
         log.Println(err)
-        return "", "", err
+        return "?", "-", errors.Wrap(err, "Request creation failed")
     }
     resp, err := client.Do(req)
     if err != nil {
         log.Println(err)
-        return "", "", err
+        return "?", "-", errors.Wrap(err, "Request execution failed")
     }
     content, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         log.Println(err)
-        return "", "", err
+        return "?", "-", errors.Wrap(err, "Failed to read response sent by server")
     }
 
     if resp.Status != "200 OK" {
@@ -96,9 +99,9 @@ func Upload(domainWithSchema string, collectionId string, authToken string, body
 
 // UploadFromCommandOutput pushes a stdout of executed command through HTTP endpoint of Backup Repository under specified domain
 // Upload is used to perform HTTP POST request
-func UploadFromCommandOutput(context ctx.ActionContext) error {
-    log.Print("/bin/bash", GetShellCommand(context.GetCommand("")))
-    cmd := exec.Command("/bin/bash", GetShellCommand(context.GetCommand(""))...)
+func UploadFromCommandOutput(app actionCtx.Action) error {
+    log.Print("/bin/bash", GetShellCommand(app.GetCommand("")))
+    cmd := exec.Command("/bin/bash", GetShellCommand(app.GetCommand(""))...)
     cmd.Stderr = os.Stderr
     stdout, pipeErr := cmd.StdoutPipe()
     if pipeErr != nil {
@@ -113,19 +116,56 @@ func UploadFromCommandOutput(context ctx.ActionContext) error {
         return execErr
     }
 
+    ctx, cancel := context.WithCancel(context.TODO())
+
     log.Printf("Starting Upload() for PID=%v", cmd.Process.Pid)
-    status, out, uploadErr := Upload(context.Url, context.CollectionId, context.AuthToken, stdout, context.Timeout)
+    status, out, uploadErr := Upload(ctx, app.Url, app.CollectionId, app.AuthToken, ReadCloserWithCancellationWhenProcessFails{stdout, cmd, cancel}, app.Timeout)
     if uploadErr != nil {
-        log.Errorf("Status: %v, Out: %v", status, out)
+        log.Errorf("Status: %v, Out: %v, Err: %v", status, out, uploadErr)
         return uploadErr
+    } else {
+        killErr := gracefullyKillProcess(cmd)
+        if killErr != nil {
+            return killErr
+        }
     }
-
-    killErr := gracefullyKillProcess(cmd)
-    if killErr != nil {
-        return killErr
-    }
-
     log.Info("Version uploaded")
 
     return nil
+}
+
+type ReadCloserWithCancellationWhenProcessFails struct {
+    Parent  io.ReadCloser
+    Process *exec.Cmd
+    Cancel  func()
+}
+
+func (r ReadCloserWithCancellationWhenProcessFails) Read(p []byte) (n int, err error) {
+    return r.Parent.Read(p)
+}
+
+func (r ReadCloserWithCancellationWhenProcessFails) Close() error {
+    c := r.Parent.Close()
+
+    err := r.Process.Wait()
+    exitCode := 0
+    if err != nil {
+        // try to get the exit code
+        if exitError, ok := err.(*exec.ExitError); ok {
+            ws := exitError.Sys().(syscall.WaitStatus)
+            exitCode = ws.ExitStatus()
+        } else {
+            exitCode = 1
+        }
+    } else {
+        ws := r.Process.ProcessState.Sys().(syscall.WaitStatus)
+        exitCode = ws.ExitStatus()
+    }
+
+    if exitCode > 0 {
+        log.Errorf("Canceling upload due to process failure - exitCode: %v", exitCode)
+        r.Cancel()
+    }
+
+    return c
 }

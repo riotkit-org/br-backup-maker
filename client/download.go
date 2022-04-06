@@ -13,7 +13,7 @@ import (
     "time"
 )
 
-func Download(context ctx.ActionContext, client HTTPClient) (io.ReadCloser, error) {
+func Download(context ctx.Action, client HTTPClient) (io.ReadCloser, error) {
     url := context.Url + fmt.Sprintf("/api/alpha/repository/collection/%v/version/%v", context.CollectionId, context.VersionToRestore)
     log.Infof("Downloading: %v", url)
 
@@ -37,7 +37,7 @@ func Download(context ctx.ActionContext, client HTTPClient) (io.ReadCloser, erro
     return response.Body, nil
 }
 
-func DownloadBackupIntoStream(context ctx.ActionContext, writer io.Writer, client HTTPClient) error {
+func DownloadBackupIntoStream(context ctx.Action, writer io.Writer, client HTTPClient) error {
     log.Debugf("Downloading %v and copying into io.Writer stream", context.CollectionId)
 
     buffer, httpErr := Download(context, client)
@@ -54,7 +54,7 @@ func DownloadBackupIntoStream(context ctx.ActionContext, writer io.Writer, clien
     return nil
 }
 
-func DownloadBackupIntoProcessStdin(context ctx.ActionContext, command string, client HTTPClient) error {
+func DownloadBackupIntoProcessStdin(context ctx.Action, command string, client HTTPClient) error {
     log.Debugf("Using command stdin as writer stream: `%v`", context.GetPrintableCommand(command))
 
     cmd := exec.Command("/bin/bash", GetShellCommand(context.GetCommand(command))...)
@@ -96,7 +96,7 @@ func DownloadBackupIntoProcessStdin(context ctx.ActionContext, command string, c
     return isErr
 }
 
-func DownloadIntoFile(context ctx.ActionContext, targetFilePath string, client HTTPClient) error {
+func DownloadIntoFile(context ctx.Action, targetFilePath string, client HTTPClient) error {
     log.Debugf("Downloading %v into file %v", context.CollectionId, targetFilePath)
 
     if err := DownloadBackupIntoProcessStdin(context, fmt.Sprintf("cat - > %v", targetFilePath), client); err != nil {

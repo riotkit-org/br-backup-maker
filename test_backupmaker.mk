@@ -20,6 +20,16 @@ test_create:
 		--recipient test@riotkit.org \
 		--log-level debug
 
+test_request_cancellation:
+	export BM_AUTH_TOKEN=$$(cat .build/test/auth-token.txt); \
+	export BM_COLLECTION_ID=$$(cat .build/test/collection-id.txt); \
+	export BM_PASSPHRASE=riotkit; \
+	${BM_BIN_PATH} make --url $$(cat .build/test/domain.txt) \
+		-c "/bin/sh -c 'sleep 1; exit 1'" \
+		--key gpg-key \
+		--recipient test@riotkit.org \
+		--log-level debug
+
 #test_download:
 #	${BIN_PATH} download --save-path /tmp/test \
 #		--url $$(cat .build/test/domain.txt) \
