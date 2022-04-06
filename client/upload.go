@@ -145,8 +145,6 @@ func (r ReadCloserWithCancellationWhenProcessFails) Read(p []byte) (n int, err e
 }
 
 func (r ReadCloserWithCancellationWhenProcessFails) Close() error {
-    c := r.Parent.Close()
-
     err := r.Process.Wait()
     exitCode := 0
     if err != nil {
@@ -167,5 +165,5 @@ func (r ReadCloserWithCancellationWhenProcessFails) Close() error {
         r.Cancel()
     }
 
-    return c
+    return r.Parent.Close()
 }
