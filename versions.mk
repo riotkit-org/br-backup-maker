@@ -4,3 +4,8 @@
 
 # https://github.com/riotkit-org/br-pgbr/releases
 BR_PGBR_VERSION=0.0.2
+
+# testing
+TEST_BACKUP_REPOSITORY_VERSION="v4.0.0-rc13"
+TEST_POSTGRES_VERSION="14.2-alpine"
+TEST_MINIO_VERSION="2022.4.8-debian-10-r0"

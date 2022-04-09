@@ -21,7 +21,7 @@ echo " >> Restoring version: ${selectedVersion}"
 
 exec backup-maker restore --url "{{ .Repository.url }}" \
     -c "${COMMAND}" \
-    --key {{ .Repository.encryptionKeyPath }} \
+    --private-key {{ .Repository.encryptionKeyPath }} \
     --recipient {{ .Repository.recipient }}\
     --log-level info \
     --version=${selectedVersion}

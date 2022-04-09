@@ -4,7 +4,7 @@
 
 set -eu
 
-COMMAND="cat - | tar xvf - -C {{ .Params.path }}";
+COMMAND="cat - | tar xvfz - -C {{ .Params.path }}";
 selectedVersion="${RESTORE_VERSION:-latest}"
 
 export BM_AUTH_TOKEN="{{ .Repository.token }}";
@@ -16,7 +16,7 @@ echo " >> Restoring version: ${selectedVersion}"
 
 exec backup-maker restore --url "{{ .Repository.url }}" \
     -c "${COMMAND}" \
-    --key {{ .Repository.encryptionKeyPath }} \
+    --private-key {{ .Repository.encryptionKeyPath }} \
     --recipient {{ .Repository.recipient }}\
     --log-level info \
     --version=${selectedVersion}
