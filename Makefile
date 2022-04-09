@@ -24,10 +24,14 @@ test: prepare_e2e_workspace
 	export TEST_MINIO_VERSION=${TEST_MINIO_VERSION}; \
 	go test -v ./...
 
+coverage: prepare_e2e_workspace
+	# see versions.mk
+	export TEST_BACKUP_REPOSITORY_VERSION=${TEST_BACKUP_REPOSITORY_VERSION}; \
+	export TEST_POSTGRES_VERSION=${TEST_POSTGRES_VERSION}; \
+	export TEST_MINIO_VERSION=${TEST_MINIO_VERSION}; \
+	go test -v ./... -covermode=count -coverprofile=coverage.out
+
 prepare_e2e_workspace:
 	sudo rm -rf .build/filesystem-config
 	cp -pr resources/filesystem-config ./.build/
 	sudo chown -R 65532:65532 .build/filesystem-config
-
-coverage:
-	go test -v ./... -covermode=count -coverprofile=coverage.out
