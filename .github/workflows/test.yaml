@@ -43,7 +43,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - uses: actions/download-artifact@v2
+            - uses: actions/download-artifact@v3
               with:
                   name: binary
                   path: .build/
@@ -78,7 +78,7 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - uses: actions/download-artifact@v2
+            - uses: actions/download-artifact@v3
               with:
                   name: binary
                   path: .build/
