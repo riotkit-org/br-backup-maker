@@ -9,7 +9,7 @@ COPY --from=pgbr /usr/bin/pgbr /usr/bin/pgbr-${BR_PGBR_DEFAULT_PG}
 RUN ln -s /usr/bin/pgbr-${BR_PGBR_DEFAULT_PG} /usr/bin/pgbr
 
 # basic tooling for running backup jobs on Kubernetes
-RUN apt-get update -y && apt-get install -y git bash curl wget gpg patchelf mysql-client && apt-get clean
+RUN apt-get update -y && apt-get install -y git bash curl wget gpg patchelf mariadb-client && apt-get clean
 
 # Backup Maker
 ADD .build/backup-maker /usr/bin/backup-maker
