@@ -18,7 +18,7 @@ jobs:
                   go-version: 1.17
 
             - name: Install dependencies for testing
-              run: "sudo apt-get update && sudo apt-get install -f mariadb-client"
+              run: "bash ./.github/ci-prepare.sh"
 
             - name: Build
               run: "make build_bm build_bmg"
