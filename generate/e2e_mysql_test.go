@@ -1,14 +1,17 @@
 package generate_test
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/riotkit-org/backup-maker/generate"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"os/exec"
 	"testing"
+	"time"
 )
 
 // TestEndToEnd_MariaDBBackupAndRestore an End-To-End testing procedure for MariaDB/MySQL
@@ -38,7 +41,7 @@ Repository:
 
 `)
 		generateMySQLSnippet("backup")
-		subTestMySQLDumpBackup(t)
+		subTestMySQLDumpBackup(t, dbHostname, dbPort)
 		_ = c.Terminate(ctx)
 
 		// =================================================================================
@@ -63,11 +66,15 @@ Repository:
 
 `)
 		generateMySQLSnippet("restore")
-		subTestMySQLRestoreBackup(t)
+		subTestMySQLRestoreBackup(t, dbHostname, dbPort)
 	})
 }
 
-func subTestMySQLDumpBackup(t *testing.T) {
+func subTestMySQLDumpBackup(t *testing.T, mysqlHost string, mysqlPort int) {
+	// inject example data
+	time.Sleep(time.Second * 5)
+	execAndAssert("mysql", "-u", "rojava", "-h", mysqlHost, "-projava", "-P", fmt.Sprintf("%v", mysqlPort), "emma_goldman", "-e", "source ../resources/test/mysql-example-structure.sql")
+
 	// run backup.sh
 	cmd := exec.Command("/bin/bash", "-c", "export PATH=$PATH:./; bash backup.sh 2>&1")
 	cmd.Dir = "../.build"
@@ -78,7 +85,7 @@ func subTestMySQLDumpBackup(t *testing.T) {
 	assert.Contains(t, string(out), "Version uploaded")
 }
 
-func subTestMySQLRestoreBackup(t *testing.T) {
+func subTestMySQLRestoreBackup(t *testing.T, mysqlHost string, mysqlPort int) {
 	// run restore.sh
 	cmd := exec.Command("/bin/bash", "-c", "export PATH=$PATH:./; bash restore.sh 2>&1")
 	cmd.Dir = "../.build"
@@ -87,6 +94,10 @@ func subTestMySQLRestoreBackup(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Contains(t, string(out), "Backup restored")
+
+	// check that data in database exists - `resources/test/mysql-example-structure.sql` inserts a one record with "Mikhail Bakunin"
+	sqlCheck := execAndReturn("mysql", "-u", "rojava", "-h", mysqlHost, "-projava", "-P", fmt.Sprintf("%v", mysqlPort), "emma_goldman", "-e", "SELECT * FROM Persons;")
+	assert.Contains(t, sqlCheck, "Bakunin")
 }
 
 func generateMySQLSnippet(operation string) {
@@ -106,4 +117,30 @@ func generateMySQLSnippet(operation string) {
 	if err := bs.Run(); err != nil {
 		log.Fatal(errors.Wrap(err, "Cannot generate backup snippet"))
 	}
+}
+
+func execAndAssert(command string, args ...string) {
+	cmd := exec.Command(command, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		log.Fatal(errors.Wrap(err, "Failed to start process"))
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Fatal(errors.Wrap(err, "Process failed"))
+	}
+}
+
+func execAndReturn(command string, args ...string) string {
+	cmd := exec.Command(command, args...)
+	var buf bytes.Buffer
+	cmd.Stdout = &buf
+	cmd.Stderr = &buf
+	if err := cmd.Start(); err != nil {
+		log.Fatal(errors.Wrap(err, "Failed to start process"))
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Fatal(errors.Wrap(err, "Process failed"))
+	}
+	return buf.String()
 }
