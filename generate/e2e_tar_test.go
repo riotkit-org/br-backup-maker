@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/riotkit-org/backup-maker/generate"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
 	"os/exec"
 	"testing"
 )
@@ -12,7 +11,7 @@ import (
 // TestEndToEnd_TarBackupAndRestore is testing End-To-End a procedure of Backup & Restore of a directory packed into a TAR.GZ archive
 func TestEndToEnd_TarBackupAndRestore(t *testing.T) {
 	WithBackupRepositoryDockerStack(func(stack ServiceStack) {
-		writeDefinition(`
+		writeDefinitionForLaterSnippetGeneration(`
 Params:
     path: ../cmd
 
@@ -89,8 +88,4 @@ func subTestTarRestore(t *testing.T) {
 	assert.Contains(t, string(out), "Backup restored")
 	assert.Contains(t, string(out), "cmd/backupmaker/main.go")
 	assert.Contains(t, string(out), "cmd/bmg/main.go")
-}
-
-func writeDefinition(content string) {
-	_ = ioutil.WriteFile("../.build/definition.yaml", []byte(content), 0755)
 }
