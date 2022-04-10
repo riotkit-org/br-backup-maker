@@ -14,6 +14,8 @@ else
     COMMAND="${COMMAND} --all-databases"
 fi
 
+COMMAND="${COMMAND} | sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/'"
+
 export BM_AUTH_TOKEN="{{ .Repository.token }}";
 export BM_COLLECTION_ID="{{ .Repository.collectionId }}";
 export BM_PASSPHRASE="{{ .Repository.passphrase }}";
