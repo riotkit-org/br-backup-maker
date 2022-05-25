@@ -15,5 +15,7 @@ RUN apt-get update -y && apt-get install -y git bash curl wget gpg patchelf mari
 ADD .build/backup-maker /usr/bin/backup-maker
 RUN chmod +x /usr/bin/backup-maker
 
+RUN mkdir -p /opt/backups && chown 1001:1001 /opt/backups && chmod 777 -R /opt/backups
+
 # non-root user by default
 USER 1001
