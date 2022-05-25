@@ -22,6 +22,7 @@ test: prepare_e2e_workspace
 	export TEST_BACKUP_REPOSITORY_VERSION=${TEST_BACKUP_REPOSITORY_VERSION}; \
 	export TEST_POSTGRES_VERSION=${TEST_POSTGRES_VERSION}; \
 	export TEST_MINIO_VERSION=${TEST_MINIO_VERSION}; \
+	export TEST_MARIADB_VERSION=${TEST_MARIADB_VERSION}; \
 	go test -v ./...
 
 coverage: prepare_e2e_workspace
@@ -29,6 +30,7 @@ coverage: prepare_e2e_workspace
 	export TEST_BACKUP_REPOSITORY_VERSION=${TEST_BACKUP_REPOSITORY_VERSION}; \
 	export TEST_POSTGRES_VERSION=${TEST_POSTGRES_VERSION}; \
 	export TEST_MINIO_VERSION=${TEST_MINIO_VERSION}; \
+	export TEST_MARIADB_VERSION=${TEST_MARIADB_VERSION}; \
 	go test -v ./... -covermode=count -coverprofile=coverage.out
 
 prepare_e2e_workspace:

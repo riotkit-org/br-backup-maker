@@ -4,9 +4,10 @@
 
 set -eu
 
+DB_NAME="{{ .Params.db }}"
 COMMAND="cat - | mysql -h '{{ .Params.hostname }}' -u '{{ .Params.user }}' -p'{{ .Params.password }}' -P '{{ .Params.port }}'"
 
-if [[ "${DB_NAME}" != "" ]]; then
+if [[ -z ${DB_NAME+x} ]] && [[ "${DB_NAME}" != "" ]]; then
     COMMAND="${COMMAND} ${DB_NAME}"
 fi
 

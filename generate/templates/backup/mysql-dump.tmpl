@@ -6,13 +6,15 @@ set -eu
 
 DB_NAME="{{ .Params.db }}"
 
-COMMAND="mysqldump --skip-lock-tables --add-drop-table --add-drop-database --add-drop-trigger -h '{{ .Params.hostname }}' -u '{{ .Params.user }}' -p'{{ .Params.password }}' -P '{{ .Params.port }}'"
+COMMAND="mysqldump --skip-lock-tables --add-drop-table --add-drop-database --add-drop-trigger -h '{{ .Params.hostname }}' -u '{{ .Params.user }}' -p{{ .Params.password }} -P '{{ .Params.port }}'"
 
 if [[ "${DB_NAME}" != "" ]]; then
     COMMAND="${COMMAND} ${DB_NAME}"
 else
     COMMAND="${COMMAND} --all-databases"
 fi
+
+COMMAND="${COMMAND} | sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/'"
 
 export BM_AUTH_TOKEN="{{ .Repository.token }}";
 export BM_COLLECTION_ID="{{ .Repository.collectionId }}";

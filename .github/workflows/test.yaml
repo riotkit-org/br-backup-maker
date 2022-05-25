@@ -17,6 +17,9 @@ jobs:
               with:
                   go-version: 1.17
 
+            - name: Install dependencies for testing
+              run: "bash ./.github/ci-prepare.sh"
+
             - name: Build
               run: "make build_bm build_bmg"
 

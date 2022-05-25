@@ -31,8 +31,9 @@ type ServiceStack struct {
 
 func WithBackupRepositoryDockerStack(test func(ServiceStack)) {
 	ctx := context.Background()
-	storage, storageHost, storagePort := createMinioContainer(ctx)
+
 	postgres, postgresHost, postgresPort := createPostgresContainer(ctx)
+	storage, storageHost, storagePort := createMinioContainer(ctx)
 	server, serverHost, serverPort := createServerContainer(ctx, postgresHost, postgresPort, storageHost, storagePort)
 
 	jwt := loginToServer(serverHost, serverPort, "admin", "admin")
@@ -174,6 +175,29 @@ func createPostgresContainer(ctx context.Context) (testcontainers.Container, str
 	return createContainer(ctx, req, 5432)
 }
 
+// MySQL container on-demand
+func CreateMariaDBContainer(ctx context.Context) (testcontainers.Container, string, int) {
+	version := os.Getenv("TEST_MARIADB_VERSION")
+	req := testcontainers.ContainerRequest{
+		Image: "mariadb:" + version,
+		Env: map[string]string{
+			"MARIADB_ROOT_PASSWORD": "mutual-aid",
+			"MARIADB_USER":          "rojava",
+			"MARIADB_PASSWORD":      "rojava",
+			"MARIADB_DATABASE":      "emma_goldman",
+		},
+		ExposedPorts: []string{"3306/tcp"},
+		WaitingFor:   wait.ForLog("MariaDB init process done. Ready for start up."),
+		Networks:     []string{"backup-repository-e2e"},
+		NetworkAliases: map[string][]string{
+			"backup-repository-e2e": {
+				"mariadb",
+			},
+		},
+	}
+	return createContainer(ctx, req, 3306)
+}
+
 func createContainer(ctx context.Context, req testcontainers.ContainerRequest, mappedPort int) (testcontainers.Container, string, int) {
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -188,4 +212,8 @@ func createContainer(ctx context.Context, req testcontainers.ContainerRequest, m
 	}
 
 	return container, strings.ReplaceAll(ip, "/", ""), mappedPort
+}
+
+func writeDefinitionForLaterSnippetGeneration(content string) {
+	_ = ioutil.WriteFile("../.build/definition.yaml", []byte(strings.ReplaceAll(content, "\t", "    ")), 0755)
 }
